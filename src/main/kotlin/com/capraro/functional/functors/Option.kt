@@ -31,6 +31,9 @@ fun <T, R> Option<T>.flatMap(fm: (T) -> Option<R>) = when (this) {
     is Option.Some -> fm(this.value)
 }
 
+//Map rewritten with flatMap
+fun <T, R> Option<T>.map2(transform: (T) -> R) = flatMap { Option.Some(transform(it)) }
+
 //Applicative
 /*interface Applicative<C<_>>: Functor<C> { //Invalid Kotlin code
     fun <A> pure(a:A): C<A>
@@ -40,9 +43,6 @@ fun <T, R> Option<T>.flatMap(fm: (T) -> Option<R>) = when (this) {
 fun <T> Option.Companion.pure(t: T): Option<T> = Option.Some(t)
 
 fun <T, R> Option<T>.ap(fab: Option<(T) -> R>): Option<R> = fab.flatMap { f -> map(f) }
-
-//Map rewritten with flatMap
-fun <T, R> Option<T>.map2(transform: (T) -> R) = flatMap { Option.Some(transform(it)) }
 
 fun main() {
 
@@ -71,6 +71,8 @@ fun main() {
     println(Option.Some(5).ap(Option.Some(2).map { f ->
         { t: Int -> f + t }
     }))
+
+    Option.None.map(String::reversed)
 }
 
 fun calculateDiscount(price: Option<Double>): Option<Double> {
