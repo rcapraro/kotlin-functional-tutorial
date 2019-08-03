@@ -36,13 +36,19 @@ fun <T, R> Option<T>.map2(transform: (T) -> R) = flatMap { Option.Some(transform
 
 //Applicative
 /*interface Applicative<C<_>>: Functor<C> { //Invalid Kotlin code
-    fun <A> pure(a:A): C<A>
+    fun <A> just(a:A): C<A>
 
     fun <A, B> ap(ca:C<A>, fab: C<(A) -> B>): C<B>
 }*/
-fun <T> Option.Companion.pure(t: T): Option<T> = Option.Some(t)
+fun <T> Option.Companion.just(t: T): Option<T> = Option.Some(t)
 
 fun <T, R> Option<T>.ap(fab: Option<(T) -> R>): Option<R> = fab.flatMap { f -> map(f) }
+
+fun half(a: Int) = when {
+    a % 2 == 0 -> Option.Some(a / 2)
+    else -> Option.None
+}
+
 
 fun main() {
 
@@ -59,6 +65,14 @@ fun main() {
             Option.Some(f + t)
         }
     })
+
+    //other exemple
+    println(
+        Option.Some(20)
+            .flatMap(::half)  //10
+            .flatMap(::half)  //5
+            .map { t -> t * 10 } //50
+    )
 
     //A shorter version with map
     println(Option.Some(5).flatMap { f ->
