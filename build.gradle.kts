@@ -20,7 +20,8 @@ dependencies {
     implementation("io.arrow-kt:arrow-extras-data:$arrowVersion")
     implementation("io.arrow-kt:arrow-extras-extensions:$arrowVersion")
     implementation("io.arrow-kt:arrow-fx:$arrowVersion")
-    implementation("io.arrow-kt:arrow-extras-extensions:$arrowVersion")
+    implementation("io.arrow-kt:arrow-effects-data:$arrowVersion")
+    implementation("io.arrow-kt:arrow-effects-extensions:$arrowVersion")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")

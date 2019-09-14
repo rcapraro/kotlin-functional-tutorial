@@ -1,4 +1,4 @@
-package com.capraro.functional.functors
+package com.capraro.functional
 
 sealed class Option<out T> {
 
@@ -44,6 +44,8 @@ fun <T> Option.Companion.just(t: T): Option<T> = Option.Some(t)
 
 fun <T, R> Option<T>.ap(fab: Option<(T) -> R>): Option<R> = fab.flatMap { f -> map(f) }
 
+infix fun <T, R> Option<(T) -> R>.applyTo(o: Option<T>): Option<R> = flatMap { f: (T) -> R -> o.map(f) }
+
 fun half(a: Int) = when {
     a % 2 == 0 -> Option.Some(a / 2)
     else -> Option.None
@@ -54,8 +56,9 @@ fun main() {
 
     println(Option.Some("Hello world").map(String::toUpperCase))
 
-    val newOption = Option.Some(2).map { it.div(5.0) }
-    println(newOption)
+    println(Option.None.map(String::reversed))
+
+    println(Option.Some(2).map { it.div(5.0) })
 
     println(calculateDiscount(Option.Some(100_000.0)))
 
@@ -66,27 +69,29 @@ fun main() {
         }
     })
 
-    //other exemple
+    //another example
     println(
         Option.Some(20)
             .flatMap(::half)  //10
             .flatMap(::half)  //5
             .map { t -> t * 10 } //50
     )
-
+    
     //A shorter version with map
-    println(Option.Some(5).flatMap { f ->
-        Option.Some(2).map { t ->
+    println(Option.just(5).flatMap { f ->
+        Option.just(2).map { t ->
             (f + t)
         }
     })
 
     //and with ap
-    println(Option.Some(5).ap(Option.Some(2).map { f ->
+    println(Option.just(5).ap(Option.just(2).map { f ->
         { t: Int -> f + t }
     }))
 
-    Option.None.map(String::reversed)
+    //with the apply function
+    println(Option.just { f: Int -> { t: Int -> f + t } } applyTo Option.just(5) applyTo Option.just(2))// Some(value=7)
+
 }
 
 fun calculateDiscount(price: Option<Double>): Option<Double> {
