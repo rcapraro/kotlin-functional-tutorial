@@ -2,6 +2,9 @@ package com.capraro.functional.arrow
 
 import arrow.core.Either
 import arrow.core.Option
+import arrow.core.extensions.either.monad.monad
+import arrow.core.extensions.fx
+import arrow.core.fix
 import arrow.core.identity
 import arrow.syntax.function.pipe
 import kotlin.math.absoluteValue
@@ -47,6 +50,22 @@ fun main() {
         })
     } pipe ::println
 
+
+    Option.fx {
+
+    }
+
+    val difference2 = Either.monad<String>().fx.monad {
+        val aOp: Option<Int> = brigitteAge.bind()
+        val pOp: Option<Int> = emmanuelAge.bind()
+        Option.fx {
+            aOp.bind() - pOp.bind()
+        }
+    }.fix()
+
+    difference2.fold(::identity) { op ->
+        op.fold({ "Not found" }, Int::toString)
+    } pipe ::println
 
 }
 
