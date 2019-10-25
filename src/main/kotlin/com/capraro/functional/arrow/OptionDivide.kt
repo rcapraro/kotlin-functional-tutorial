@@ -50,7 +50,7 @@ fun flatMapDivision(a: Int, b: Int, den: Int): Option<Pair<Int, Int>> {
 }
 
 fun comprehensionDivision(a: Int, b: Int, den: Int): Option<Pair<Int, Int>> {
-    return Option.fx() {
+    return Option.fx {
         val aDiv: Int = optionDivide(a, den).bind()
         val bDiv: Int = optionDivide(b, den).bind()
         aDiv to bDiv

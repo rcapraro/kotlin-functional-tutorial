@@ -50,11 +50,6 @@ fun main() {
         })
     } pipe ::println
 
-
-    Option.fx {
-
-    }
-
     val difference2 = Either.monad<String>().fx.monad {
         val aOp: Option<Int> = brigitteAge.bind()
         val pOp: Option<Int> = emmanuelAge.bind()
