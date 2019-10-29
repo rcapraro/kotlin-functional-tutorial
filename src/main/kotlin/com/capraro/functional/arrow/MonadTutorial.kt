@@ -1,6 +1,8 @@
 package com.capraro.functional.arrow
 
 import arrow.core.Either
+import arrow.fx.IO
+import arrow.fx.handleError
 import java.time.LocalDate
 
 data class Speaker(val name: String, val company: String) {
@@ -20,38 +22,7 @@ data class Conference(val name: String, val date: LocalDate) {
 
 data class City(val name: String)
 
-class SpeakerService {
-
-    fun loadAllSpeakers(): List<Speaker> {
-
-        if (Math.random() > 0.5) throw RuntimeException("Something gets wrong !")
-        else return listOf(Speaker("Richard capraro", "Saagie"), Speaker("John DOE", "Acme"))
-    }
-}
-
-class ApiClient(private val service: SpeakerService) {
-    suspend fun getSpeakers(): Either<Throwable, List<Speaker>> = Either.catch {
-        service.loadAllSpeakers()
-    }
-}
-
-suspend fun getSpeakers() {
-
-    ApiClient(SpeakerService())
-            .getSpeakers()
-            .map { speakers: List<Speaker> ->
-                speakers.map { it.name }
-            }.fold(
-                    {
-                        it.printStackTrace()
-                    },
-                    {
-                        println(it)
-                    })
-
-}
-
-fun allCitiesToVisit(speaker: Speaker): List<City> {
+fun allCitiesToVisitFor(speaker: Speaker): List<City> {
     val result = mutableListOf<City>()
 
     for (talk in speaker.getTalks())
@@ -62,15 +33,69 @@ fun allCitiesToVisit(speaker: Speaker): List<City> {
     return result
 }
 
-fun allCitiesToVisit2(speaker: Speaker): List<City> {
-
+fun allCitiesToVisitFlatMap(speaker: Speaker): List<City> {
     return speaker
             .getTalks()
             .flatMap { talk -> talk.getConferences() }
             .flatMap { conference -> conference.getCities() }
 }
 
+class SpeakerService {
+    fun loadAllSpeakers(raiseError: Boolean = false): List<Speaker> {
+        if (raiseError) throw RuntimeException("Something gets wrong !")
+        else return listOf(Speaker("Richard capraro", "Saagie"), Speaker("John DOE", "Acme"))
+    }
+}
+
+class ApiClientEither(private val service: SpeakerService) {
+    suspend fun getSpeakers(raiseError: Boolean = false): Either<Throwable, List<Speaker>> = Either.catch {
+        service.loadAllSpeakers(raiseError)
+    }
+}
+
+suspend fun getSpeakersEither(raiseError: Boolean = false) {
+    ApiClientEither(SpeakerService())
+            .getSpeakers(raiseError)
+            .map { speakers ->
+                speakers.map { it.name }
+            }.fold(
+                    {
+                        it.printStackTrace()
+                    },
+                    {
+                        println(it)
+                    })
+}
+
+class ApiClientIO(private val service: SpeakerService) {
+    fun getSpeakers(raiseError: Boolean = false): IO<List<Speaker>> = IO {
+        service.loadAllSpeakers(raiseError)
+    }
+
+}
+
+fun getSpeakersIO(raiseError: Boolean = false): IO<List<String>> {
+    return ApiClientIO(SpeakerService())
+            .getSpeakers(raiseError)
+            .map { speakers -> speakers.map { it.name } }
+            .handleError { error -> listOf(error.message!!) }
+}
+
+
 suspend fun main() {
-    getSpeakers()
+    getSpeakersEither()
+
+    val speakersIO = getSpeakersIO()
+
+    println(speakersIO.unsafeRunSync())
+
+    println("-".repeat(20))
+
+    getSpeakersEither(raiseError = true)
+
+    val speakersIOError = getSpeakersIO(raiseError = true)
+
+    println(speakersIOError.unsafeRunSync())
+
 }
 
