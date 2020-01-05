@@ -26,6 +26,9 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-moshi:2.7.0")
     kapt("com.squareup.moshi:moshi-kotlin-codegen:1.9.2")
 
+    implementation("com.typesafe:config:1.4.0")
+    implementation("com.google.guava:guava:28.1-jre")
+
     testImplementation("org.jetbrains.kotlin:kotlin-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
 }
