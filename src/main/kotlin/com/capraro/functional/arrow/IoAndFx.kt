@@ -31,7 +31,7 @@ suspend fun parseUserCo(json: Either<ApiError, Json>): Either<JsonException, Use
 interface Api {
     fun query(q: String): Either<ApiError, Json>
     suspend fun queryCo(q: String): Either<ApiError, Json>
-    suspend fun queryIO(q: String): IO<Either<ApiError, Json>>
+    fun queryIO(q: String): IO<Either<ApiError, Json>>
 }
 
 class MyApi : Api {
@@ -43,7 +43,10 @@ class MyApi : Api {
         return Json("{user: 1}").right()
     }
 
-    override suspend fun queryIO(q: String): IO<Either<ApiError, Json>> = IO {
+    // equivalent to the preceding function because in Arrow FX,
+    // a suspend function returning a value type (e.g Option<String>) can be considered the same
+    // as an IO returning the same value type (IO<Option<String>>)
+    override fun queryIO(q: String): IO<Either<ApiError, Json>> = IO {
         Json("{user: 1}").right()
     }
 
@@ -55,17 +58,18 @@ class MyApi : Api {
                                 .mapLeft { jsonException -> ApiError("Failed to parse: exception $jsonException") }
                     }
 
-    //Monad comprehension with Either.fx and bind()
+    //Monad comprehension with Either.fx and bind() (or '!' which is equivalent)
     suspend fun getUserFx(id: UserId): Either<ApiError, User> = Either.fx {
-        val result = query("SELECT * FROM users WHERE id = $id").bind()
-        parseUser(result).mapLeft { ApiError("Failed to parse") }.bind()
+        val result = !query("SELECT * FROM users WHERE id = $id")
+        println("JSON result is $result")
+        !parseUser(result).mapLeft { ApiError("Failed to parse") }
     }
 
     //Lift in IO
     suspend fun getUserIoAndFx(id: UserId) = IO.fx {
-        val userRequest = effect { queryCo("123") }.bind()
-        effect { println("Seen $userRequest") }.bind()
-        effect { parseUserCo(userRequest) }.bind()
+        val userRequest = !effect { queryCo("SELECT * FROM users WHERE id = $id") }
+        !effect { println("Seen $userRequest") }
+        !effect { parseUserCo(userRequest) }
     }
 }
 
