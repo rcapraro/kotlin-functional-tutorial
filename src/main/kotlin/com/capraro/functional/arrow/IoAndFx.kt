@@ -73,10 +73,10 @@ class MyApi : Api {
     }
 }
 
-fun sayHello(): Unit =
+suspend fun sayHello(): Unit =
         println("Hello World")
 
-fun sayGoodBye(): Unit =
+suspend fun sayGoodBye(): Unit =
         println("Good bye World!")
 
 // Apply the effect immediately
