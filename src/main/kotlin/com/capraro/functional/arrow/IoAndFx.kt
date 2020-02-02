@@ -1,9 +1,8 @@
 package com.capraro.functional.arrow
 
-import arrow.core.Either
+import arrow.core.*
 import arrow.core.extensions.fx
-import arrow.core.flatMap
-import arrow.core.right
+import arrow.fx.ForIO
 import arrow.fx.IO
 import arrow.fx.extensions.fx
 import arrow.fx.extensions.io.monad.monad
@@ -86,10 +85,10 @@ class MyApi : Api {
 }
 
 suspend fun sayHello(): Unit =
-        println("Hello World")
+    println("Hello World")
 
 suspend fun sayGoodBye(): Unit =
-        println("Good bye World!")
+    println("Good bye World!")
 
 // Apply the effect immediately
 fun greetEffect(): IO<Unit> = IO.fx {
