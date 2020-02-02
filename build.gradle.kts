@@ -17,6 +17,8 @@ dependencies {
     implementation("io.arrow-kt:arrow-core:$arrowVersion")
     implementation("io.arrow-kt:arrow-syntax:$arrowVersion")
     implementation("io.arrow-kt:arrow-fx:$arrowVersion")
+    implementation("io.arrow-kt:arrow-fx-mtl:$arrowVersion")
+
 
     implementation("io.arrow-kt:arrow-fx-rx2:$arrowVersion")
     implementation("io.arrow-kt:arrow-fx-reactor:$arrowVersion")
