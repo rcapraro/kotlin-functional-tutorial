@@ -107,7 +107,7 @@ fun <F> parseResponse(response: Kind<F, InternalResponse>, functor: Functor<F>):
 }
 
 fun <F> calculate(quantity: Kind<F, Float>, price: Kind<F, Float>, applicative: Applicative<F>): Kind<F, Float> {
-    return applicative.map(quantity, price) { it.a * it.b }
+    return applicative.mapN(quantity, price) { it.a * it.b }
 }
 
 fun <F> useCase(username: String, api: BitcoinApi, A: Async<F>): Kind<F, Float> {

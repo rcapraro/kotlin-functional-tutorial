@@ -18,7 +18,7 @@ fun <F> parseInt(value: Kind<F, String>, functor: Functor<F>): Kind<F, Int> =
     functor.run { value.map { it.toInt() } }
 
 fun <F> multiply(amount: Kind<F, Float>, multiplier: Kind<F, Float>, applicative: Applicative<F>): Kind<F, Float> =
-    applicative.map(amount, multiplier) { it.a * it.b }
+    applicative.mapN(amount, multiplier) { it.a * it.b }
 
 fun main() {
 

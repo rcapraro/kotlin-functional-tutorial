@@ -1,9 +1,9 @@
 plugins {
-    kotlin("jvm") version "1.3.61"
-    kotlin("kapt") version "1.3.61"
+    kotlin("jvm") version "1.3.71"
+    kotlin("kapt") version "1.3.71"
 }
 
-val arrowVersion = "0.10.4"
+val arrowVersion = "0.10.5"
 
 repositories {
     mavenCentral()
